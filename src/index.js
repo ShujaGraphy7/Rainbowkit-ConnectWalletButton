@@ -1,58 +1,64 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
 import "@rainbow-me/rainbowkit/styles.css";
 
 import {
-  lightTheme,
+  darkTheme,
   getDefaultWallets,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
-import { configureChains, createClient, WagmiConfig } from "wagmi";
+import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import {
   mainnet,
-  polygon,
-  optimism,
-  arbitrum,
-  goerli,
-  hardhat,
+  scrollSepolia,
+  sepolia,
+  polygonZkEvmTestnet,
+  arbitrumSepolia,
+  mantleTestnet,
   polygonMumbai,
 } from "wagmi/chains";
-// import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
+import { alchemyProvider } from "wagmi/providers/alchemy";
 
-const { chains, provider } = configureChains(
-  [polygonMumbai, mainnet, polygon, optimism, arbitrum, goerli, hardhat ],
+const { chains, publicClient } = configureChains(
   [
-    // alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
-    publicProvider(),
-  ]
+    polygonMumbai,
+    mainnet,
+    scrollSepolia,
+    sepolia,
+    polygonZkEvmTestnet,
+    arbitrumSepolia,
+    mantleTestnet,
+  ],
+  [alchemyProvider({ apiKey: process.env.ALCHEMY_ID }), publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
-  appName: "Hydromotion Presale",
+  appName: "My RainbowKit App",
+  projectId: "YOUR_PROJECT_ID",
   chains,
 });
 
-const wagmiClient = createClient({
+const wagmiConfig = createConfig({
   autoConnect: true,
   connectors,
-  provider,
+  publicClient,
 });
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <WagmiConfig client={wagmiClient}>
-    <React.StrictMode>
+  <WagmiConfig config={wagmiConfig}>
+  <React.StrictMode>
       <RainbowKitProvider
         chains={chains}
         modalSize={{
           smallScreen: "compact",
           largeScreen: "wide",
         }}
-        theme={lightTheme({
-          accentColor: "#65A30D",
+        theme={darkTheme({
+          accentColor: "#ec4899",
           accentColorForeground: "white",
           overlayBlur: "large",
           borderRadius: "large",
@@ -60,7 +66,6 @@ root.render(
       >
         <App />
       </RainbowKitProvider>
-
     </React.StrictMode>
   </WagmiConfig>
 );
